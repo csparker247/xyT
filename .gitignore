@@ -1,6 +1,9 @@
 #CLion
 .idea/*
 
+#Build System
+build/*
+
 # Compiled Object files
 *.slo
 *.lo

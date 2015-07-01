@@ -9,31 +9,35 @@ int main( int argc, char** argv ) {
 
   double frameWidth = Video.get( CV_CAP_PROP_FRAME_WIDTH);
   double frameHeight = Video.get( CV_CAP_PROP_FRAME_HEIGHT );
-  double frameTime = ceil(Video.get( CV_CAP_PROP_FRAME_COUNT )) + ceil(Video.get( CV_CAP_PROP_FPS )); // round up and add another second of frames because you can't trust video headers
+  double frameTime = ceil(Video.get( CV_CAP_PROP_FRAME_COUNT )); // round up
   bool needsColorCvt = Video.get(CV_CAP_PROP_CONVERT_RGB);
 
-  std::vector<cv::Mat> outputImages;
-  for (int i = 0; i < 10; ++i) {
-    cv::Mat output = cv::Mat::zeros(frameHeight, frameTime, CV_8UC3);
-    outputImages.push_back(output);
-  }
+  std::vector<cv::Mat> columns;
 
   cv::Mat frame; // The current decoded frame
   double current_output_column = 0; // The output column index of the current frame
 
   while ( ( Video.read(frame) ) != false ) {
     if ( frame.empty() ) continue;
-    std::cerr << "Swapping time and space for frame: " << current_output_column + 1 << "\r" << std::flush;
+    std::cerr << "Unravelling the fabric of space-time for frame: " << current_output_column + 1 << "/" << frameTime;
+    if ( current_output_column > frameTime )
+      std::cerr << "\?\?\?!?";
+    std::cerr << "\r" << std::flush;
 
     // For each column in the frame, copy its corresponding mat in outputImages
-    for ( int input_col_index = 0; input_col_index < outputImages.size(); ++input_col_index ) {
-      cv::Mat input_col_mat;
-      frame.col(input_col_index).copyTo(input_col_mat);
-
-      input_col_mat.copyTo( outputImages[input_col_index].col(current_output_column) );
-    }
-
+    int input_col_index = frameWidth/2;
+    cv::Mat input_col_mat;
+    frame.col(input_col_index).copyTo(input_col_mat);
+    columns.push_back(input_col_mat);
+  
     ++current_output_column; // Next column
+  }
+  std::cerr << std::endl;
+
+  cv::Mat output(frameHeight, columns.size(), CV_8UC3);
+  for ( int col_counter = 0; col_counter < columns.size(); ++col_counter) {
+    std::cerr << "Restitching reality: " << col_counter + 1 << "/" << columns.size() << "\r" << std::flush;
+    columns[col_counter].copyTo(output.col(col_counter));
   }
   std::cerr << std::endl;
 
@@ -41,12 +45,9 @@ int main( int argc, char** argv ) {
   if ( argc > 2 )
     outputDir = argv[2];
 
-  for ( int outCounter = 0; outCounter < outputImages.size(); ++outCounter){
-    std::cerr << "Encoding video frame: " << outCounter + 1 << "\r" << std::flush;
-    std::string outputName = outputDir + std::to_string(outCounter) + ".png";
-    cv::imwrite(outputName, outputImages[outCounter]);
-  }
-  std::cerr << std::endl;
+  std::string outputName = outputDir + "output.png";
+  cv::imwrite(outputName, output);
+
 
   return 0;
 }
