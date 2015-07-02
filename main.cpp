@@ -1,15 +1,16 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <boost/filesystem.hpp>
 
 std::vector< std::vector<cv::Mat> > images;
-int max_slices_in_memory = 1000;
+int max_slices_in_memory = 2000;
 
 void emptyImages(int suffix, int frameHeight, std::string outputDir) {
   std::cerr << std::endl;
   for ( int image = 0 ; image < images.size() ; ++image ) {
     cv::Mat output(frameHeight, images[image].size(), CV_8UC3);
     for ( int col_counter = 0; col_counter < images[image].size(); ++col_counter) {
-      std::cerr << "Stitching space to time: [" << image << "] " << col_counter + 1 << "/" << images[image].size() << "\r" << std::flush;
+      std::cerr << "Mixing up the fiddly bits: [" << image << "] " << col_counter + 1 << "/" << images[image].size() << "\r" << std::flush;
       images[image][col_counter].copyTo(output.col(col_counter));
     }
 
@@ -27,11 +28,13 @@ int main( int argc, char** argv ) {
   if(!Video.isOpened())  // check if we succeeded
     return -1;
 
-  std::string outputDir = "";
-    outputDir = argv[2];
-
   std::string outputFinal = "";
-    outputFinal = argv[3];
+  outputFinal = argv[2];
+
+  bool cleanupTmp = true;
+
+  boost::filesystem::create_directory("tmp");
+  std::string outputDir = "tmp/";
 
   double frameWidth = Video.get( CV_CAP_PROP_FRAME_WIDTH);
   double frameHeight = Video.get( CV_CAP_PROP_FRAME_HEIGHT );
@@ -74,17 +77,21 @@ int main( int argc, char** argv ) {
 
   // Restitch images
   for ( int input_col_index = 0; input_col_index < frameWidth; ++input_col_index ) {
-    cv::Mat finalImage( frameHeight, frameTime, CV_8UC3 );
+    cv::Mat finalImage( frameHeight, current_frame, CV_8UC3 );
     for ( int partial_img = 0; partial_img <= suffix; ++partial_img ) {
-      std::cerr << "Dealing with human limitations: [" << input_col_index << "] " << partial_img << "/" << suffix << std::flush;
+      std::cerr << "Making it just work: [" << input_col_index << "] " << partial_img << "/" << suffix << "\r" << std::flush;
       std::string partialImgPath = outputDir + std::to_string(input_col_index) + "_" + std::to_string(partial_img) + ".png";
       cv::Mat temp = cv::imread( partialImgPath );
       temp.copyTo( finalImage(cv::Rect( partial_img * max_slices_in_memory, 0, temp.cols, temp.rows)) );
+      if (cleanupTmp) boost::filesystem::remove( partialImgPath );
     }
     std::string outputName = outputFinal + std::to_string(input_col_index) + ".png";
+    // To-Do: Try the VideoWriter again
     cv::imwrite(outputName, finalImage);
   }
   std::cerr << std::endl;
+
+  if (cleanupTmp) boost::filesystem::remove_all("tmp/");
 
   return 0;
 }
