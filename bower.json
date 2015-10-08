@@ -1,0 +1,21 @@
+{
+  "name": "xyT-viewer",
+  "version": "0.1.0",
+  "authors": [
+    "Seth Parker <csparker247@gmail.com>"
+  ],
+  "description": "Playback xyT images",
+  "main": "js/xyt.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "openseadragon": "~2.0.0",
+    "jquery": "~2.1.4"
+  }
+}
