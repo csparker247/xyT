@@ -6,11 +6,14 @@
     <script src="bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon.min.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
 </head>
-<body style="background-color:black;color:white;">
+<body style="background-color:#232323;color:white;">
 <div id="chung-king-express" class="openseadragon"></div>
 <div id="title" style="position:fixed;bottom:5;font-family:'Roboto Mono'">
     Chungking Express (1994)
-    <div id="play-pause" style="cursor:pointer" onclick="toggleScroll()">PLAY</div>
+    <div id="buttons">
+    <span id="reset" style="cursor:pointer" onclick="panToStart()">GO TO START</span> ||
+    <span id="play-pause" style="cursor:pointer" onclick="toggleScroll()">PLAY</span>
+  </div>
 </div>
 </body>
 <script src="js/xyt.js"></script>
