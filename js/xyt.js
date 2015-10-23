@@ -33,8 +33,19 @@ var isRunning = false;
 
 function panToStart() { vp.panTo(vp.imageToViewportCoordinates(0,540), true) };
 
-function timePan() { vp.panBy(vp.imageToViewportCoordinates(1,0)) };
-function startScroll() { thumb.play(); scroller = setInterval(timePan, 41.70837504) };
+function timePan() {
+  if( !thumb.paused) {
+    var frame = thumb.currentTime * (24000/1001);
+    var pos = vp.imageToViewportCoordinates(frame,540);
+    vp.panTo(pos);
+  }
+};
+
+function startScroll() {
+  thumb.play();
+  scroller = setInterval(timePan, 1)
+};
+
 function stopScroll() { thumb.pause(); clearInterval(scroller) };
 function toggleScroll() {
     if ( isRunning == false ) {
