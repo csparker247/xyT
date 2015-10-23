@@ -1,0 +1,25 @@
+#title {
+  position: fixed;
+  bottom: 5;
+  font-family:'Roboto Mono';
+}
+
+#center-line {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 100%;
+  border-left: thin solid white;
+}
+
+#buttons span {
+  cursor: pointer;
+}
+
+#thumb-wrapper {
+    position: fixed;
+    top: calc(100% - 162px);
+    left: calc(100% - 300px);
+    border: thin solid white;
+}

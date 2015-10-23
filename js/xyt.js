@@ -7,14 +7,35 @@ var viewer = OpenSeadragon({
 });
 
 var vp = viewer.viewport;
+var image;
+var thumb = $("#thumb").get(0);
+
+viewer.addHandler('pan', function (e) {
+  if (thumb.paused) {
+    var frame = vp.getCenter().x * viewer.world.getItemAt(0).getContentSize().x;
+    var second = frame / (24000/1001);
+    thumb.currentTime = second;
+  }
+});
+
+viewer.addHandler('canvas-drag', function(e) {
+  if (isRunning)
+    thumb.pause();
+});
+
+viewer.addHandler('canvas-drag-end', function(e) {
+  if (isRunning)
+    thumb.play();
+});
+
 var scroller;
 var isRunning = false;
 
 function panToStart() { vp.panTo(vp.imageToViewportCoordinates(0,540), true) };
 
 function timePan() { vp.panBy(vp.imageToViewportCoordinates(1,0)) };
-function startScroll() { scroller = setInterval(timePan, 41.70837504) };
-function stopScroll() { clearInterval(scroller) };
+function startScroll() { thumb.play(); scroller = setInterval(timePan, 41.70837504) };
+function stopScroll() { thumb.pause(); clearInterval(scroller) };
 function toggleScroll() {
     if ( isRunning == false ) {
         startScroll();
@@ -27,5 +48,7 @@ function toggleScroll() {
     }
 };
 
-// Initial position
-setTimeout(panToStart, 50);
+// On-Load Setup
+$(window).load(function() {
+  panToStart();
+});

@@ -3,17 +3,25 @@
     <title>xyT Viewer</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,700">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/xyt-viewer.css">
     <script src="bower_components/openseadragon/built-openseadragon/openseadragon/openseadragon.min.js"></script>
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
 </head>
 <body style="background-color:#232323;color:white;">
 <div id="chung-king-express" class="openseadragon"></div>
-<div id="title" style="position:fixed;bottom:5;font-family:'Roboto Mono'">
+<div id="center-line"></div>
+<div id="title">
     Chungking Express (1994)
     <div id="buttons">
-    <span id="reset" style="cursor:pointer" onclick="panToStart()">GO TO START</span> ||
-    <span id="play-pause" style="cursor:pointer" onclick="toggleScroll()">PLAY</span>
-  </div>
+      <span id="reset" onclick="panToStart()">GO TO START</span> ||
+      <span id="play-pause" onclick="toggleScroll()">PLAY</span>
+    </div>
+</div>
+<div id="thumb-wrapper">
+  <video id="thumb">
+    <source src="https://googledrive.com/host/0BxjtEz6no21sZ29FaGFfTUJRN0E/chungking-152p.mp4" type='video/mp4'/>
+  </video>
 </div>
 </body>
 <script src="js/xyt.js"></script>
