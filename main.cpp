@@ -1,6 +1,11 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include <vector>
+
 #include <boost/filesystem.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
 
 std::vector< std::vector<cv::Mat> > images;
 int max_slices_in_memory = 2000;
@@ -36,18 +41,20 @@ int main( int argc, char** argv ) {
   boost::filesystem::create_directory("tmp");
   std::string outputDir = "tmp/";
 
-  double frameWidth = Video.get( CV_CAP_PROP_FRAME_WIDTH);
-  double frameHeight = Video.get( CV_CAP_PROP_FRAME_HEIGHT );
-  double frameTime = ceil(Video.get( CV_CAP_PROP_FRAME_COUNT )); // round up
-  bool needsColorCvt = Video.get(CV_CAP_PROP_CONVERT_RGB);
+  double frameWidth = Video.get(cv::CAP_PROP_FRAME_WIDTH);
+  double frameHeight = Video.get(cv::CAP_PROP_FRAME_HEIGHT);
+  double frameTime = std::ceil(Video.get(cv::CAP_PROP_FRAME_COUNT));
+  bool needsColorCvt = Video.get(cv::CAP_PROP_CONVERT_RGB);
 
   for ( int i = 0; i < frameWidth; ++i ) {
     std::vector<cv::Mat> columns;
     images.push_back(columns);
   }
 
-  cv::Mat frame; // The current decoded frame
-  double current_frame = 0; // The output column index of the current frame
+  // The current decoded frame
+  cv::Mat frame;
+  // The output column index of the current frame
+  double current_frame = 0.0;
 
   while ( ( Video.read(frame) ) != false ) {
     if ( frame.empty() ) continue;

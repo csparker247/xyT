@@ -1,15 +1,21 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 project(xyT)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 3 REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system filesystem)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+set(CXX_STANDARD_REQUIRED on)
 
-include_directories(${OpenCV_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIR})
+set(sources
+    main.cpp
+)
+add_executable(xyT ${sources})
 
-set(SOURCE_FILES main.cpp)
-add_executable(xyT ${SOURCE_FILES})
-
-target_link_libraries(xyT ${OpenCV_LIBS} ${Boost_LIBRARIES})
+target_link_libraries(xyT
+    opencv_core
+    opencv_imgcodecs
+    opencv_imgproc
+    opencv_videoio
+    Boost::filesystem
+)
